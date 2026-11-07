@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app_mobile/button_custom.dart';
 import 'package:quiz_app_mobile/data/question.dart';
 
 class Question extends StatefulWidget {
-  const Question({super.key});
+  const Question({super.key, required this.chooseAnswer});
 
+  final void Function(String answer) chooseAnswer;
   @override
   State<Question> createState() => _Question();
 }
@@ -12,16 +14,16 @@ class Question extends StatefulWidget {
 class _Question extends State<Question> {
   var currentIndex = 0;
 
-  final currentQuestion = questions[0];
-  void answerQuestion() {
+  void answerQuestion(answer) {
+    widget.chooseAnswer(answer);
     setState(() {
       currentIndex++;
     });
-    print("test $currentIndex");
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentQuestion = questions[currentIndex];
     return SizedBox(
       width: double.infinity,
       child: Padding(
@@ -31,11 +33,17 @@ class _Question extends State<Question> {
           crossAxisAlignment: CrossAxisAlignment
               .stretch, // giúp các items chiếm full width của thằng cha
           children: [
-            Text(currentQuestion.text, style: TextStyle(color: Colors.white)),
+            Text(
+              currentQuestion.text,
+              style: GoogleFonts.roboto(color: Colors.white, fontSize: 24),
+            ),
             SizedBox(height: 30),
 
             ...currentQuestion.getSuffeAnswer().map((answer) {
-              return ButtonCustom(onTab: answerQuestion, text: answer);
+              return ButtonCustom(
+                onTab: () => answerQuestion(answer),
+                text: answer,
+              );
             }),
           ],
         ),
